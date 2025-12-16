@@ -4,13 +4,33 @@
 class Entity {
  protected:
   SDL_Texture* texture = nullptr;
-  SDL_FRect position = {0, 0, 0, 0};
+  SDL_FRect* src = NULL;
+  SDL_FRect* position = NULL;
+  bool visible = true;
 
-  Entity(SDL_Texture* tex, const SDL_FRect& pos)
-      : texture(tex), position(pos) {}
+ public:
+  Entity(SDL_Texture* tex, SDL_FRect* src, SDL_FRect* pos)
+      : texture(tex), src(src), position(pos) {}
   ~Entity() {
-    if (texture) {
-      SDL_DestroyTexture(texture);
+    if (src) {
+      delete src;
+      src = NULL;
     }
+    if (position) {
+      delete position;
+      position = NULL;
+    }
+  }
+  bool virtual render(SDL_Renderer* renderer) const {
+    if (texture == nullptr) return true;
+    if (!visible) return false;
+    return SDL_RenderTexture(renderer, texture, src, position);
+  }
+  void setVisible(bool vis) { visible = vis; }
+  void setPosition(SDL_FRect* pos) {
+    if (position) {
+      delete position;
+    }
+    position = pos;
   }
 };

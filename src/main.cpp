@@ -3,29 +3,17 @@
 #include <SDL3/SDL_main.h>
 #include <SDL3_ttf/SDL_ttf.h>
 
+#include <iostream>
+
 #include "../include/GameManager.h"
+#include "../include/GameState.h"
 #include "../include/ScreenManager.h"
+#include "../include/TextureManager.h"
 
-#define WINDOW_WIDTH 800
-#define WINDOW_HEIGHT 600
-
-struct GameState {
-  SDL_Window* window = nullptr;
-  SDL_Renderer* renderer = nullptr;
-  GameManager* gameManager = nullptr;
-  ScreenManager* screenManager = nullptr;
-
-  ~GameState() {
-    delete gameManager;
-    delete screenManager;
-  }
-
-  SDL_AppResult handleEvent(SDL_Event* event) {
-    return gameManager->handleEvent(event);
-  }
-  SDL_AppResult renderFrame() { return screenManager->renderFrame(); }
-};
 GameState* gameState = new GameState();
+TextureManager* textureManager = nullptr;
+GameManager* gameManager = nullptr;
+ScreenManager* screenManager = nullptr;
 
 SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
   SDL_SetAppMetadata("1Button", "1.0.0", "com.example.1button");
@@ -37,7 +25,8 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
 
   // TODO: set virtual window size, maintain aspect ratio
   Uint32 windowFlags = SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE;
-  if (!SDL_CreateWindowAndRenderer("1Button", WINDOW_WIDTH, WINDOW_HEIGHT,
+  if (!SDL_CreateWindowAndRenderer("1Button", gameState->windowDimensions.width,
+                                   gameState->windowDimensions.height,
                                    windowFlags, &gameState->window,
                                    &gameState->renderer)) {
     SDL_Log("Failed to create window and renderer: %s", SDL_GetError());
@@ -48,13 +37,13 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
     return SDL_APP_FAILURE;
   }
 
-  SDL_SetRenderLogicalPresentation(gameState->renderer, WINDOW_WIDTH,
-                                   WINDOW_HEIGHT,
-                                   SDL_LOGICAL_PRESENTATION_LETTERBOX);
+  SDL_SetRenderLogicalPresentation(
+      gameState->renderer, gameState->windowDimensions.width,
+      gameState->windowDimensions.height, SDL_LOGICAL_PRESENTATION_LETTERBOX);
 
-  gameState->gameManager = new GameManager();
-  gameState->screenManager =
-      new ScreenManager(gameState->renderer, gameState->gameManager);
+  textureManager = new TextureManager(gameState);
+  gameManager = new GameManager(gameState, textureManager);
+  screenManager = new ScreenManager(gameState, gameManager);
   return SDL_APP_CONTINUE;
 }
 
@@ -62,17 +51,18 @@ SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event) {
   if (event->type == SDL_EVENT_QUIT) {
     return SDL_APP_SUCCESS;
   }
-  return gameState->handleEvent(event);
+  return gameManager->handleEvent(event);
 }
 
 SDL_AppResult SDL_AppIterate(void* appstate) {
-  return gameState->renderFrame();
+  return screenManager->renderFrame();
 }
 
 void SDL_AppQuit(void* appstate, SDL_AppResult result) {
-  SDL_DestroyRenderer(gameState->renderer);
-  SDL_DestroyWindow(gameState->window);
   delete gameState;
+  delete textureManager;
+  delete gameManager;
+  delete screenManager;
   TTF_Quit();
   SDL_Quit();
 }

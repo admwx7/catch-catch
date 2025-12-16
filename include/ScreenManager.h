@@ -4,31 +4,19 @@
 #include <SDL3_ttf/SDL_ttf.h>
 
 #include "GameManager.h"
-
-/*
-## SINGLETON: ScreenManager - defines the API for screens to render out
-  - maps GameState from GameManager to the appropriate Screen for rendering
-  - connects to SDL renderer and GameManager
-*/
+#include "GameState.h"
+#include "SceneManager.h"
+#include "TextureManager.h"
 
 class ScreenManager {
  private:
-  SDL_Renderer* renderer = nullptr;
+  GameState* state = nullptr;
   GameManager* gameManager = nullptr;
   TTF_Font* font = nullptr;
 
  public:
-  ScreenManager(SDL_Renderer* renderer, GameManager* gameManager)
-      : renderer(renderer), gameManager(gameManager) {
-    char* font_path = NULL;
-    SDL_asprintf(&font_path, "%s../assets/%s", SDL_GetBasePath(), "cinzel.ttf");
-    font = TTF_OpenFont(font_path, 42);
-    TTF_SetFontStyle(font, TTF_STYLE_BOLD);
-  }
-  ~ScreenManager() {
-    if (font) {
-      TTF_CloseFont(font);
-    }
-  }
+  ScreenManager(GameState* state, GameManager* gameManager);
+  ~ScreenManager();
   SDL_AppResult renderFrame();
+  void renderMainMenuScreen();
 };

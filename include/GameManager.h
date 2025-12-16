@@ -1,9 +1,11 @@
 #pragma once
 #include <SDL3/SDL.h>
 
-#include <string>
-#include <unordered_map>
-#include <vector>
+#include "Entity.h"
+#include "GameState.h"
+#include "SceneManager.h"
+#include "TextEntity.h"
+#include "TextureManager.h"
 
 /*
 ## SINGLETON: GameManager - manages the overall game state
@@ -21,25 +23,24 @@
 */
 
 class GameManager {
-  enum class GameState {
-    MAIN_MENU,
-    SETTINGS_MENU,
-    NEW_GAME,
-    NEW_CYCLE,
-    DAY_CYCLE,
-    NIGHT_CYCLE,
-    END_CYCLE,
-    END_GAME,
-  };
+ private:
+  GameState* state = nullptr;
+  SceneManager* sceneManager = nullptr;
+  TextureManager* textureManager = nullptr;
+  uint64_t keyHoldStart = 0;                // milliseconds
+  const uint64_t KEY_HOLD_THRESHOLD = 500;  // milliseconds
+  // TODO: ensure this is reset to 0 when scene is changed
+  int selectedOptionIndex = 0;
+
+ protected:
+  void longPressAction();
+  void shortPressAction();
 
  public:
-  GameManager() {
-    // Initialize game manager with renderer
-  }
+  GameManager(GameState* state, TextureManager* textureManager);
+  ~GameManager();
 
-  ~GameManager() {
-    // Cleanup resources
-  }
-
+  SceneManager::Scene getCurrentScene() const;
+  std::vector<Entity*> getEntitiesForCurrentScene() const;
   SDL_AppResult handleEvent(SDL_Event* event);
 };

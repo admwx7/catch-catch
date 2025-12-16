@@ -1,11 +1,27 @@
+# TODO
+- [ ] finish prototype
+  - [ ] add in scene transitions
+  - [ ] add in card sets
+  - [ ] add core game logic
+  - [ ] add "upgrade" system
+- [ ] web build asset
+- [ ] create our itch.io page
+- [ ] upload build
+- [ ] add polish
+  - [ ] replace placeholder assets with literally anything
+  - [ ] expand card options - aka more content
+  - [ ] balancing
+- [ ] upload build
+- [ ] refine our itch.io page
+
 # Requirements
 
 ## Technical
 ### Must Have
-- multi-threading for game state | renderer
 - virtual sizing
 - web build (WebGL)
 ### Nice to Have
+- multi-threading for game state | renderer
 - basic animation (given time)
 
 ## Theme: GameDev
@@ -15,3 +31,55 @@
 - environment:
   - menu / inventory style
 - color palette: bright / vibrant / fun / warm
+
+
+
+# CONCEPT
+- https://gameaccessibilityguidelines.com/
+
+Concept: <INSERT PRODUCT HERE> Tycoon
+Genre: Simulation | Roguelike
+Controls: 1-Button, cycle cards, long-press to select
+Inspiration: Roguelike Deckbuilder + Business Tycoon
+
+RUN MODIFIERS | persist for the full run
+- high industry turnover | people are more likely to quit
+- difficulty level | can't fall below X employees
+
+CYCLE MODIFIERS | change periodically throughout a run
+-- time cycle --
+  -- RNG (7-14d) --
+  [1] - lead dev quit \/ productivity | new hire
+  -- STATIC (30d) --
+  - pay bills (including salaries)
+-- product cycle --
+  SETUP
+  CORE GAMEPLAY LOOP
+  CONCLUSION => REPEAT
+
+SETUP - once per product cycle
+-- choose a product to build --
+[1] [2] [3] - build your own <insert> | might include 5+ card selections
+
+CORE GAMEPLAY LOOP - repeats until loss condition or product completion
+-- game creation --
+[1] [2] [3] - choose a genre | ^ Complexity
+[1] [2] [3] - choose a mechanical system | MMO, Single player, ...
+-- day/night (repeat as needed) --
+[1] [2] [3] - operations | ^ productivity   \/ morale
+
+CONCLUSION - once per product cycle, can trigger win conditions
+- upgrade system: [1] [2] [3] - unlock rpgs | upgrade computers | ...
+- payout: $$$
+- level up: employees
+
+POST GAME
+- summary
+
+WIN CONDITIONS
+- deliver X products
+- earn X currency
+
+LOSE CONDITIONS
+- all employees quit
+- ran out of funding
