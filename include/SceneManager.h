@@ -7,8 +7,10 @@
 #include <vector>
 
 #include "ButtonEntity.h"
+#include "CardEntity.h"
 #include "Entity.h"
 #include "GameState.h"
+#include "Sprite.h"
 #include "TextureManager.h"
 
 class SceneManager {
@@ -41,6 +43,10 @@ class SceneManager {
     CYCLE_SUMMARY,
     GAME_SUMMARY,
   };
+  enum SpaceAnimationStates {
+    IDLE,
+    ACTIVE,
+  };
 
  private:
   Scene currentScene = MAIN_MENU;
@@ -50,6 +56,8 @@ class SceneManager {
   std::unordered_map<SceneComponent, std::vector<Entity*>> gameEntities = {};
 
  public:
+  Sprite<SpaceAnimationStates>* space_icon = nullptr;
+
   SceneManager(GameState* state, TextureManager* textureManager);
   ~SceneManager();
   void changeScene(Scene newScene);
@@ -61,4 +69,5 @@ class SceneManager {
   ButtonEntity* createMenuButton(
       std::string const& text, int index, int totalButtons,
       ButtonEntity::ButtonState initialState = ButtonEntity::ButtonState::IDLE);
+  CardEntity* createCardEntity();
 };

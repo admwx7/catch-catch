@@ -1,10 +1,5 @@
 #include "../include/SceneManager.h"
 
-enum SpaceAnimationStates {
-  IDLE,
-  ACTIVE,
-};
-
 ButtonEntity* SceneManager::createMenuButton(
     const std::string& text, int index, int totalButtons,
     ButtonEntity::ButtonState initialState) {
@@ -31,9 +26,35 @@ ButtonEntity* SceneManager::createMenuButton(
       textureManager->getTexture(TextureManager::MENU_BUTTON_BACKGROUND),
       buttonPosition, text, {16.0f, 8.0f});
 }
+// CardEntity* SceneManager::createCardEntity() {
+//   return new CardEntity(texture, position, card);
+// }
 
 SceneManager::SceneManager(GameState* state, TextureManager* textureManager)
     : state(state), textureManager(textureManager) {
+  space_icon = new Sprite<SpaceAnimationStates>(
+      textureManager->getTexture(TextureManager::SPACE_BAR_ICON),
+      new SDL_FRect{state->windowDimensions.width - 40.0f,
+                    state->windowDimensions.height - 40.0f, 32.0f, 32.0f},
+      {
+          {SpaceAnimationStates::IDLE,
+           {new SDL_FRect{0.0f, 0.0f, 32.0f, 32.0f}}},
+          {SpaceAnimationStates::ACTIVE,
+           {
+               new SDL_FRect{0.0f, 0.0f, 32.0f, 32.0f},
+               new SDL_FRect{32.0f, 0.0f, 32.0f, 32.0f},
+               new SDL_FRect{64.0f, 0.0f, 32.0f, 32.0f},
+               new SDL_FRect{96.0f, 0.0f, 32.0f, 32.0f},
+               new SDL_FRect{128.0f, 0.0f, 32.0f, 32.0f},
+               new SDL_FRect{160.0f, 0.0f, 32.0f, 32.0f},
+               new SDL_FRect{192.0f, 0.0f, 32.0f, 32.0f},
+               new SDL_FRect{224.0f, 0.0f, 32.0f, 32.0f},
+               new SDL_FRect{256.0f, 0.0f, 32.0f, 32.0f},
+               new SDL_FRect{256.0f, 0.0f, 32.0f, 32.0f},
+           }},
+      },
+      SpaceAnimationStates::IDLE, 100, false);
+
   scenes[Scene::MAIN_MENU] = {
       SceneComponent::MAIN_MENU_BACKGROUND,
       SceneComponent::MAIN_MENU_BUTTONS,
@@ -100,17 +121,7 @@ SceneManager::SceneManager(GameState* state, TextureManager* textureManager)
       createMenuButton("Settings", 1, 3),
       createMenuButton("Quit", 2, 3),
   };
-  gameEntities[SceneComponent::GLOBAL_HUD] = {new Sprite<SpaceAnimationStates>(
-      textureManager->getTexture(TextureManager::SPACE_BAR_ICON),
-      new SDL_FRect{state->windowDimensions.width - 40.0f,
-                    state->windowDimensions.height - 40.0f, 32.0f, 32.0f},
-      {
-          {SpaceAnimationStates::IDLE,
-           {new SDL_FRect{0.0f, 0.0f, 32.0f, 32.0f}}},
-          {SpaceAnimationStates::ACTIVE,
-           {new SDL_FRect{256.0f, 0.0f, 32.0f, 32.0f}}},
-      },
-      SpaceAnimationStates::IDLE)};
+  gameEntities[SceneComponent::GLOBAL_HUD] = {space_icon};
   gameEntities[SceneComponent::GAME_HUD] = {};
   gameEntities[SceneComponent::CARDS_GAME_MODIFIERS] = {};
   gameEntities[SceneComponent::CARDS_EVENTS_RNG] = {};
@@ -126,6 +137,10 @@ SceneManager::~SceneManager() {
     for (Entity* entity : entities) {
       delete entity;
     }
+  }
+  if (space_icon) {
+    delete space_icon;
+    space_icon = nullptr;
   }
 }
 void SceneManager::changeScene(Scene newScene) { currentScene = newScene; }

@@ -3,8 +3,8 @@
 - [x] create our itch.io page
 - [x] upload build
 - [ ] finish prototype
-  - [ ] animation triggers for Sprite
-  - [ ] animate the space bar icon when holding space
+  - [x] animation triggers for Sprite
+  - [x] animate the space bar icon when holding space
   - [ ] add in card sets
   - [ ] add core game logic
     - [ ] state machine for phases

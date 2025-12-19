@@ -28,6 +28,8 @@ SDL_AppResult GameManager::handleEvent(SDL_Event* event) {
       } else {
         shortPressAction();
       }
+      sceneManager->space_icon->setState(
+          SceneManager::SpaceAnimationStates::IDLE);
       keyHoldStart = 0;
       return SDL_APP_CONTINUE;
     case SDL_EVENT_MOUSE_BUTTON_DOWN:
@@ -36,9 +38,13 @@ SDL_AppResult GameManager::handleEvent(SDL_Event* event) {
         // do nothing
       } else if (keyHoldStart == 0) {
         keyHoldStart = SDL_GetTicks();
+        sceneManager->space_icon->setState(
+            SceneManager::SpaceAnimationStates::ACTIVE);
       } else if (keyHeldDuration > KEY_HOLD_THRESHOLD) {
         longPressAction();
         keyHoldStart = -1;
+        sceneManager->space_icon->setState(
+            SceneManager::SpaceAnimationStates::IDLE);
       }
       return SDL_APP_CONTINUE;
     default:
