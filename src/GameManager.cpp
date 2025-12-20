@@ -32,6 +32,8 @@ GameManager::GameManager(GlobalState* state, TextureManager* textureManager)
   sceneChangedCallback();
 }
 GameManager::~GameManager() {
+  selectedOptionIterator = std::vector<Entity*>::iterator{};
+  selectableEntities.clear();
   delete sceneManager;
   sceneManager = nullptr;
   delete cardManager;
@@ -146,23 +148,44 @@ void GameManager::longPressAction() {
       }
       break;
     case SceneManager::Scene::NEW_RUN:
-      selectCard(SceneManager::NEW_GAME);
+      selectCard(SceneManager::NEW_GAME,
+                 StudioState::ModifierType::STUDIO_MODIFIER);
       break;
     case SceneManager::Scene::NEW_GAME:
       selectCard(SceneManager::DAY_CYCLE);
       break;
     case SceneManager::Scene::DAY_CYCLE:
-      // TODO: store the day case, increment when hitting this state
+      studio.incrementDay();
       selectCard(SceneManager::NIGHT_CYCLE);
       break;
     case SceneManager::Scene::NIGHT_CYCLE:
-      // TODO: check day counter against EVENT_TIMED triggers
-      // TODO: check day counter against EVENT_RNG triggers
-
-      // DAY or END_CYCLE
+      switch (studio.getNextEvent()) {
+        case CardManager::DeckType::EVENTS_RNG:
+          sceneManager->changeScene(SceneManager::EVENT_RNG);
+          break;
+        case CardManager::DeckType::EVENTS_TIMED:
+          sceneManager->changeScene(SceneManager::EVENT_TIMED);
+          break;
+        case CardManager::DeckType::PLAYER_ACTIONS:
+          sceneManager->changeScene(SceneManager::DAY_CYCLE);
+          break;
+        case CardManager::DeckType::RUN_UNLOCKS:
+        default:
+          sceneManager->changeScene(SceneManager::END_CYCLE);
+          break;
+      }
       break;
     case SceneManager::Scene::END_CYCLE:
-      // CYCLE_UNLOCK or END_GAME
+      switch (studio.checkOutcome()) {
+        case StudioState::Outcome::ONGOING:
+          sceneManager->changeScene(SceneManager::CYCLE_UNLOCK);
+          break;
+        case StudioState::Outcome::WIN:
+        case StudioState::Outcome::LOSE:
+        default:
+          sceneManager->changeScene(SceneManager::END_GAME);
+          break;
+      }
       break;
     case SceneManager::Scene::CYCLE_UNLOCK:
       selectCard(SceneManager::NEW_GAME);
@@ -171,11 +194,9 @@ void GameManager::longPressAction() {
       sceneManager->changeScene(SceneManager::MAIN_MENU);
       break;
     case SceneManager::Scene::EVENT_RNG:
-      // TODO: set when next EVENT_RNG will occur
       selectCard(SceneManager::NIGHT_CYCLE);
       break;
     case SceneManager::Scene::EVENT_TIMED:
-      // TODO: set when next EVENT_TIMED will occur
       selectCard(SceneManager::NIGHT_CYCLE);
       break;
     case SceneManager::Scene::SETTINGS_MENU:
@@ -185,8 +206,19 @@ void GameManager::longPressAction() {
       break;
   }
 }
-void GameManager::selectCard(SceneManager::Scene nextScene) {
-  studio.addCard(dynamic_cast<CardEntity*>(*selectedOptionIterator));
+void GameManager::selectCard(SceneManager::Scene nextScene,
+                             StudioState::ModifierType modifierType) {
+  studio.addCard(dynamic_cast<CardEntity*>(*selectedOptionIterator),
+                 modifierType);
+  switch (studio.checkOutcome()) {
+    case StudioState::Outcome::ONGOING:
+      break;
+    case StudioState::Outcome::WIN:
+    case StudioState::Outcome::LOSE:
+    default:
+      nextScene = SceneManager::END_GAME;
+      break;
+  }
   sceneManager->changeScene(nextScene);
 }
 void GameManager::shortPressAction() {

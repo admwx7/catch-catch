@@ -1,15 +1,8 @@
 #pragma once
+#include <memory>
 #include <vector>
 
 #include "CardEntity.h"
-
-// struct ProductState {
-//   string genre;           // RPG, Adventure, Strategy, ...
-//   string platform;        // PC, Console, Mobile
-//   string targetAudience;  // Kids, Teens, Adults
-//   string artStyle;        // Pixel Art, 3D, Hand-drawn
-//   string type;            // Single-player, Multiplayer, MMO, turn-based
-// };
 
 // Thoughts:
 // - each card can take the state object in and return an updated version
@@ -20,7 +13,7 @@
 // rendering
 
 class GameState {
-  std::vector<class CardEntity*> selectedCards = {};
+  std::vector<CardEntity*> selectedCards = {};
   int complexity = 10;
   int time = 10;
   int price = 10;
@@ -31,10 +24,18 @@ class GameState {
  public:
   GameState() {}
   ~GameState() {
-    for (CardEntity* card : selectedCards) {
-      delete card;
-    }
+    // FIXME: adding this causes malloc errors on exit for some reason...
+    // for (auto card : selectedCards) {
+    //   delete card;
+    // }
     selectedCards.clear();
   }
-  void addCard(CardEntity* card) { selectedCards.push_back(card); }
+  void addCard(CardEntity* card) {
+    selectedCards.push_back(new CardEntity(*card));
+    // TODO: apply card effects to current game or studio state
+  }
+  void applyModifier(CardEntity* card) {
+    // TODO: apply studio modifiers to new game
+  }
+  bool gameComplete() { return progress >= 100; }
 };

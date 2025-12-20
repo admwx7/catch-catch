@@ -37,7 +37,6 @@ void CardManager::clearDeck(DeckType type) {
 void CardManager::initializeDeck(DeckType type) {
   switch (type) {
     case DeckType::RUN_MODIFIERS: {
-      SDL_Log("The thing!");
       decks[type] = std::vector<CardEntity*>{
           new CardEntity(textureManager->getTexture(
                              TextureManager::TextureName::CARD_GAME_GENRE_RPG),
@@ -157,7 +156,7 @@ void CardManager::shuffleDeck(DeckType type) {
 }
 std::vector<CardEntity*> CardManager::drawCards(DeckType type, int count,
                                                 bool returnUnique) {
-  std::vector<CardEntity*> drawnCards;
+  std::vector<CardEntity*> drawnCards = {};
   auto& deck = decks[type];
   int index = 0;
   for (int i = 0; i < count; ++i) {
@@ -168,7 +167,7 @@ std::vector<CardEntity*> CardManager::drawCards(DeckType type, int count,
     } else {
       index = random() % deck.size();
     }
-    drawnCards.push_back(deck.at(index));
+    drawnCards.push_back(new CardEntity(*deck.at(index)));
   }
   return drawnCards;
 }

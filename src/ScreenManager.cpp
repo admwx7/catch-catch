@@ -10,6 +10,7 @@ ScreenManager::ScreenManager(GlobalState* state, GameManager* gameManager)
 ScreenManager::~ScreenManager() {
   if (font) {
     TTF_CloseFont(font);
+    font = nullptr;
   }
 }
 

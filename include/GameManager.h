@@ -35,5 +35,7 @@ class GameManager {
   SceneManager::Scene getCurrentScene() const;
   std::vector<Entity*> getEntitiesForCurrentScene() const;
   SDL_AppResult handleEvent(SDL_Event* event);
-  void selectCard(SceneManager::Scene nextScene);
+  void selectCard(
+      SceneManager::Scene nextScene,
+      StudioState::ModifierType modifierType = StudioState::GAME_MODIFIER);
 };

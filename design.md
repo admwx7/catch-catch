@@ -8,9 +8,9 @@
   - [ ] add in card sets
   - [ ] add core game logic
     - [~] state machine for phases
-    - [~] track user actions / stats
+    - [x] track user actions / stats
     - [ ] hooks for card logic
-    - [ ] win/loss state conditionals
+    - [x] win/loss state conditionals
 - [ ] add polish
   - [ ] tutorials / hints for how to play
   - [ ] add "upgrade" system

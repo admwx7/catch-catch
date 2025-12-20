@@ -44,6 +44,8 @@ SceneManager::SceneManager(GlobalState* state, TextureManager* textureManager,
           {SpaceAnimationStates::ACTIVE,
            {
                new SDL_FRect{0.0f, 0.0f, 32.0f, 32.0f},
+               new SDL_FRect{0.0f, 0.0f, 32.0f, 32.0f},
+               new SDL_FRect{0.0f, 0.0f, 32.0f, 32.0f},
                new SDL_FRect{32.0f, 0.0f, 32.0f, 32.0f},
                new SDL_FRect{64.0f, 0.0f, 32.0f, 32.0f},
                new SDL_FRect{96.0f, 0.0f, 32.0f, 32.0f},
@@ -152,7 +154,6 @@ SceneManager::~SceneManager() {
     for (auto entity : entities) {
       delete entity;
     }
-    entities.clear();
   }
   gameEntities.clear();
 }
